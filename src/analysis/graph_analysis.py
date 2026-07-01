@@ -73,11 +73,11 @@ def analyze_graph():
 
     degrees = dict(G.degree())
 
-    best_node = max(degrees, key=degrees.get)
+    best_node, best_degree = max(degrees.items(), key=lambda item: item[1])
 
     print("\nNodo con mayor conectividad")
     print(best_node)
-    print(degrees[best_node])
+    print(best_degree)
 
     # ==========================
     # Distribución de conexiones
@@ -110,6 +110,7 @@ def analyze_graph():
     # ==========================
     # Calles sin nombre
     # ==========================
+
     print("Calles sin nombre:")
     streets_without_name = 0
 
@@ -121,6 +122,9 @@ def analyze_graph():
     print(f"\nCalles sin nombre: {streets_without_name}")
     print(f"Porcentaje: {100 * streets_without_name / G.number_of_edges():.2f}%")
 
+    # ==========================
+    # Top 10 nodos más conectados
+    # ==========================
 
     degrees = dict(G.degree())
 
@@ -134,6 +138,10 @@ def analyze_graph():
     for node, degree in top_nodes[:10]:
         print(f"Nodo {node} -> {degree} conexiones")
 
+    # ==========================
+    # Conectividad
+    # ==========================
+
     components = list(nx.connected_components(G.to_undirected()))
     print("\nConectividad")
 
@@ -142,6 +150,10 @@ def analyze_graph():
     largest = max(components, key=len)
 
     print(f"Mayor componente: {len(largest)} nodos")
+
+    # ==========================
+    # Bounding Box
+    # ==========================
 
     xs = []
     ys = []
@@ -157,7 +169,11 @@ def analyze_graph():
 
     print(f"Longitud mínima : {min(xs)}")
     print(f"Longitud máxima : {max(xs)}")
-    
+
+    # ==========================
+    # Centroide
+    # ==========================
+
     centroid_x = sum(xs) / len(xs)
     centroid_y = sum(ys) / len(ys)
 

@@ -70,7 +70,7 @@ numpy==2.5.0
 osmnx==2.1.0
 ortools==9.15.6755
 packaging==26.2
-pandas>=3.0.3
+pandas>=2.0.0
 pandocfilters==1.5.1
 parso==0.8.7
 pillow==12.2.0

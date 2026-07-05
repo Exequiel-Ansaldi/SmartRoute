@@ -39,29 +39,30 @@ graph TD
   * [x] Agregar cálculo de tiempos estimados de viaje según el tipo de calle (`maxspeed`).
 
 
-### ⬜ Fase 4: Algoritmos de Optimización de Rutas
-* [ ] **TSP (Travelling Salesperson Problem)**:
-  * [ ] Solución óptima o heurística (Nearest Neighbor + Búsqueda Local 2-Opt) para un único vehículo.
+### 🔹 Fase 4: Algoritmos de Optimización de Rutas (Parcialmente completado)
+* [x] **TSP (Travelling Salesperson Problem)**:
+  * [x] Solución heurística (Nearest Neighbor + Búsqueda Local 2-Opt) para un único vehículo ([tsp.py](file:///C:/Users/GAMER/PROYECCTO_OPTIMIZACION_RUTS/src/optimization/tsp.py)).
 * [ ] **VRP (Vehicle Routing Problem)**:
-  * [ ] Extender el problema a múltiples vehículos considerando capacidades de carga (`CVRP`) y, opcionalmente, ventanas de tiempo (`VRPTW`).
+  * [x] Extender el problema a múltiples vehículos considerando capacidades de carga (`CVRP`) con heurística greedy ([vrp.py](file:///C:/Users/GAMER/PROYECCTO_OPTIMIZACION_RUTS/src/optimization/vrp.py)).
+  * [ ] Agregar ventanas de tiempo (`VRPTW`).
   * [ ] Integración de resolvedor matemático como **Google OR-Tools** o implementaciones metaheurísticas.
-* [ ] **Reconstrucción del Camino Geométrico**:
-  * [ ] Traducir el orden óptimo de clientes de vuelta a una lista ordenada de aristas del grafo vial para poder trazar el camino exacto calle por calle.
+* [x] **Reconstrucción del Camino Geométrico**:
+  * [x] Traducir el orden óptimo de clientes de vuelta a una lista ordenada de nodos/aristas del grafo vial para poder trazar el camino exacto calle por calle ([reconstruct.py](file:///C:/Users/GAMER/PROYECCTO_OPTIMIZACION_RUTS/src/optimization/reconstruct.py)).
 
-### ⬜ Fase 5: Simulación Logística y Visualización
-* [ ] **Visualización de Recorridos**:
-  * [ ] Graficar las rutas resultantes diferenciando cada vehículo con colores llamativos y flechas de sentido sobre el mapa de Concordia.
-* [ ] **Simulación Logística**:
-  * [ ] Crear un simulador temporal que muestre el avance de los vehículos en tiempo real, calculando el momento de llegada a cada cliente e identificando posibles cuellos de botella (por ejemplo, congestión simulada).
+### 🔹 Fase 5: Simulación Logística y Visualización (Completado inicial)
+* [x] **Visualización de Recorridos**:
+  * [x] Graficar las rutas resultantes diferenciando cada vehículo con colores llamativos y flechas de sentido sobre el mapa de Concordia ([route_plotter.py](file:///C:/Users/GAMER/PROYECCTO_OPTIMIZACION_RUTS/src/visualization/route_plotter.py)).
+* [x] **Simulación Logística**:
+  * [x] Crear un simulador temporal que muestre el avance de los vehículos, calculando el momento de llegada a cada cliente e identificando posibles cuellos de botella como esperas, llegadas tarde o congestión simulada ([logistics.py](file:///C:/Users/GAMER/PROYECCTO_OPTIMIZACION_RUTS/src/simulation/logistics.py)).
 
-### ⬜ Fase 6: Interfaz y Despliegue (Productivización)
-* [ ] **Script Runner Principal (`main.py`)**:
-  * [ ] Archivo de entrada interactivo para correr simulaciones desde la terminal.
-* [ ] **Dashboard Interactivo**:
-  * [ ] Desarrollar una aplicación web ligera (por ejemplo, con **Streamlit** o **Dash**) que permita elegir la cantidad de clientes, posicionar el depósito con un clic, ejecutar la optimización y ver los mapas interactivos (`folium` / `ipyleaflet`).
-* [ ] **Documentación**:
-  * [ ] Agregar Guía de Arquitectura, API docs y manual de usuario.
-* [ ] **Docker & Infraestructura**:
-  * [ ] Crear un `Dockerfile` optimizado para empaquetar las dependencias geoespaciales (`GDAL`, `PROJ`, etc.) que suelen dar problemas de instalación.
-* [ ] **CI/CD**:
-  * [ ] Pipeline en GitHub Actions para validación automática de formato (`black`/`flake8`), chequeo de tipos (`mypy`) y ejecución automática de tests en cada push.
+### 🔹 Fase 6: Interfaz y Despliegue (Productivización completada inicial)
+* [x] **Script Runner Principal (`main.py`)**:
+  * [x] Archivo de entrada interactivo para correr simulaciones desde la terminal ([main.py](file:///C:/Users/GAMER/PROYECCTO_OPTIMIZACION_RUTS/main.py)).
+* [x] **Dashboard Interactivo**:
+  * [x] Aplicación web ligera con **Streamlit** para elegir cantidad de clientes, vehículos, capacidad y algoritmo, ejecutar la optimización y ver mapa/resultados ([app.py](file:///C:/Users/GAMER/PROYECCTO_OPTIMIZACION_RUTS/src/dashboard/app.py)).
+* [x] **Documentación**:
+  * [x] Guía de arquitectura, API docs y manual de uso ([docs](file:///C:/Users/GAMER/PROYECCTO_OPTIMIZACION_RUTS/docs)).
+* [x] **Docker & Infraestructura**:
+  * [x] `Dockerfile` con dependencias geoespaciales del sistema (`GDAL`, `PROJ`, `GEOS`) y dependencias Python ([Dockerfile](file:///C:/Users/GAMER/PROYECCTO_OPTIMIZACION_RUTS/Dockerfile)).
+* [x] **CI/CD**:
+  * [x] Pipeline en GitHub Actions para validación automática de formato (`black`), lint (`flake8`), tipos (`mypy`) y tests ([ci.yml](file:///C:/Users/GAMER/PROYECCTO_OPTIMIZACION_RUTS/.github/workflows/ci.yml)).

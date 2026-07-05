@@ -1,0 +1,2 @@
+"""Dashboard interactivo del proyecto."""
+

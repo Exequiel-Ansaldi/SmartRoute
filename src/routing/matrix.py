@@ -3,26 +3,9 @@ from typing import cast
 
 import networkx as nx
 import numpy as np
+from src.config import DEFAULT_SPEED_KPH, DEFAULT_SPEEDS_KPH
 from src.scenario.entities import Scenario
 from src.routing.dijkstra import dijkstra
-
-
-DEFAULT_SPEEDS = {
-    "motorway": 110,
-    "motorway_link": 60,
-    "trunk": 100,
-    "trunk_link": 50,
-    "primary": 70,
-    "primary_link": 40,
-    "secondary": 60,
-    "secondary_link": 35,
-    "tertiary": 40,
-    "tertiary_link": 30,
-    "residential": 30,
-    "living_street": 20,
-    "unclassified": 30,
-    "service": 20,
-}
 
 
 def parse_maxspeed(maxspeed_val) -> float | None:
@@ -66,7 +49,7 @@ def get_edge_speed(edge_data) -> float:
     if isinstance(highway, list):
         highway = highway[0]
 
-    return DEFAULT_SPEEDS.get(highway, 30.0)
+    return DEFAULT_SPEEDS_KPH.get(highway, DEFAULT_SPEED_KPH)
 
 
 def add_travel_times_to_graph(graph: nx.MultiDiGraph) -> None:
@@ -77,7 +60,7 @@ def add_travel_times_to_graph(graph: nx.MultiDiGraph) -> None:
         speed_kph = get_edge_speed(data)
         # Evitar división por cero o velocidades negativas
         if speed_kph <= 0:
-            speed_kph = 30.0
+            speed_kph = DEFAULT_SPEED_KPH
         
         speed_mps = speed_kph / 3.6
         length = float(data.get("length", 0.0))

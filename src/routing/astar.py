@@ -2,6 +2,8 @@ import heapq
 import math
 import networkx as nx
 
+from src.config import ASTAR_MAX_SPEED_KPH
+
 def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """
     Calcula la distancia de círculo máximo (Haversine) en metros entre dos
@@ -60,8 +62,7 @@ def astar_shortest_path(
             return 0.0
     else:
         # Velocidad máxima de diseño para mantener admisibilidad al calcular tiempo (m/s)
-        # 130 km/h = 36.11 m/s
-        max_speed_mps = 130.0 / 3.6
+        max_speed_mps = ASTAR_MAX_SPEED_KPH / 3.6
 
         if weight == "travel_time":
             def heuristic(node):

@@ -1,7 +1,7 @@
 import osmnx as ox
 
-GRAPH_PATH = "data/raw/concordia.graphml"
+from src.config import GRAPH_PATH
 
 
 def load_graph():
-    return ox.load_graphml(GRAPH_PATH)
+    return ox.load_graphml(str(GRAPH_PATH))

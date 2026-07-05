@@ -1,10 +1,6 @@
-import os
 import osmnx as ox
 
-CITY = "Concordia, Entre Ríos, Argentina"
-
-DATA_DIR = "data/raw"
-GRAPH_FILE = os.path.join(DATA_DIR, "concordia.graphml")
+from src.config import CITY, DATA_DIR, GRAPH_PATH, NETWORK_TYPE
 
 
 def download_city():
@@ -15,14 +11,14 @@ def download_city():
 
     G = ox.graph_from_place(
         CITY,
-        network_type="drive"
+        network_type=NETWORK_TYPE
     )
 
-    os.makedirs(DATA_DIR, exist_ok=True)
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-    ox.save_graphml(G, GRAPH_FILE)
+    ox.save_graphml(G, str(GRAPH_PATH))
 
-    print("Ciudad guardada correctamente.")
+    print(f"Ciudad guardada correctamente en {GRAPH_PATH}.")
 
     return G
 

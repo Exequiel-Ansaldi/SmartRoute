@@ -58,14 +58,14 @@ if __name__ == "__main__":
     from src.utils.load_graph import load_graph
     from src.scenario.generator import ScenarioGenerator
     from src.graph.augment_graph import GraphAugmenter
-    from src.config import SEED
+    from src.config import CLIENTS, SEED
 
     print("1. Cargando grafo...")
     G = load_graph()
 
-    print("2. Generando escenario...")
+    print(f"2. Generando escenario con {CLIENTS} clientes...")
     generator = ScenarioGenerator(G, seed=SEED)
-    scenario = generator.generate_scenario(num_clients=15)
+    scenario = generator.generate_scenario(num_clients=CLIENTS)
 
     print("3. Aumentando grafo...")
     augmenter = GraphAugmenter(G)

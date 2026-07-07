@@ -26,9 +26,7 @@ def _to_int(value: float, scale: int = _SCALE) -> int:
 
 def _matrix_to_int(matrix: np.ndarray, scale: int = _SCALE) -> list[list[int]]:
     n = matrix.shape[0]
-    return [
-        [_to_int(float(matrix[i, j]), scale) for j in range(n)] for i in range(n)
-    ]
+    return [[_to_int(float(matrix[i, j]), scale) for j in range(n)] for i in range(n)]
 
 
 def _normalize_service_times(
@@ -238,9 +236,7 @@ def solve_vrp_ortools(
             unassigned=[node for i, node in enumerate(nodes) if i != depot_index],
         )
 
-    time_dimension = (
-        routing.GetDimensionOrDie("Time") if use_time_windows else None
-    )
+    time_dimension = routing.GetDimensionOrDie("Time") if use_time_windows else None
     visited_indices: set[int] = {depot_index}
     routes: list[VehicleRoute] = []
 
@@ -276,10 +272,7 @@ def solve_vrp_ortools(
                 vehicle_id=vehicle_id + 1,
                 route_indices=route_indices,
                 route=[nodes[i] for i in route_indices],
-                load=sum(
-                    demand_by_node[nodes[i]]
-                    for i in route_indices[1:-1]
-                ),
+                load=sum(demand_by_node[nodes[i]] for i in route_indices[1:-1]),
                 total_cost=total_cost,
                 arrival_times=arrival_times if use_time_windows else None,
                 total_time=(

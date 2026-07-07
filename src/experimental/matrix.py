@@ -61,10 +61,10 @@ def add_travel_times_to_graph(graph: nx.MultiDiGraph) -> None:
         # Evitar división por cero o velocidades negativas
         if speed_kph <= 0:
             speed_kph = DEFAULT_SPEED_KPH
-        
+
         speed_mps = speed_kph / 3.6
         length = float(data.get("length", 0.0))
-        
+
         travel_time = length / speed_mps
         data["speed_kph"] = speed_kph
         data["travel_time"] = travel_time
@@ -81,7 +81,9 @@ class CostMatrixGenerator:
         self.graph = cast(nx.MultiDiGraph, graph.copy())
         add_travel_times_to_graph(self.graph)
 
-    def generate(self, scenario: Scenario, weight: str = "length") -> tuple[np.ndarray, list[str], dict[str, dict[str, list]]]:
+    def generate(
+        self, scenario: Scenario, weight: str = "length"
+    ) -> tuple[np.ndarray, list[str], dict[str, dict[str, list]]]:
         """
         Genera la matriz de costos y guarda todos los caminos mínimos entre el depósito
         y los clientes.
@@ -99,14 +101,14 @@ class CostMatrixGenerator:
         # Identificar depósito e IDs de clientes
         depot_id = scenario.depot.id
         client_ids = [c.id for c in scenario.clients]
-        
+
         # El orden del índice de la matriz es: primero el depósito, luego los clientes
         nodes_list = [depot_id] + client_ids
         N = len(nodes_list)
 
         # Inicializar matriz de costos
         matrix = np.full((N, N), float("inf"))
-        
+
         # Inicializar diccionario de caminos
         paths = {u: {} for u in nodes_list}
 
@@ -119,7 +121,9 @@ class CostMatrixGenerator:
                 # Si el nodo no está en el grafo por alguna razón, se deja con infinito
                 continue
 
-            distances, predecessors = dijkstra(self.graph, source=u, target=None, weight=weight)
+            distances, predecessors = dijkstra(
+                self.graph, source=u, target=None, weight=weight
+            )
 
             for j, v in enumerate(nodes_list):
                 if u == v:
@@ -127,7 +131,7 @@ class CostMatrixGenerator:
 
                 if v in distances:
                     matrix[i, j] = distances[v]
-                    
+
                     # Reconstruir camino desde v hasta u usando predecessors
                     path = []
                     curr = v
@@ -135,7 +139,7 @@ class CostMatrixGenerator:
                         path.append(curr)
                         curr = predecessors.get(curr)
                     path.reverse()
-                    
+
                     # Verificar que el camino realmente inicie en u (por seguridad de conectividad)
                     if path and path[0] == u:
                         paths[u][v] = path

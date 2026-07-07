@@ -49,14 +49,14 @@ class GraphAugmenter:
 
         # Determinar de forma exacta los cambios realizados comparando ambos grafos
         is_multi = self.graph.is_multigraph()
-        
+
         original_nodes_set = set(self.graph.nodes)
         augmented_nodes_set = set(augmented_graph.nodes)
         inserted_nodes = list(augmented_nodes_set - original_nodes_set)
 
         original_edges_set = set(self.graph.edges(keys=is_multi))
         augmented_edges_set = set(augmented_graph.edges(keys=is_multi))
-        
+
         removed_edges = list(original_edges_set - augmented_edges_set)
         added_edges = list(augmented_edges_set - original_edges_set)
 
@@ -67,7 +67,9 @@ class GraphAugmenter:
             added_edges=added_edges,
         )
 
-    def _insert_point(self, graph: nx.MultiDiGraph, road_point: Client | Depot, kind: str) -> None:
+    def _insert_point(
+        self, graph: nx.MultiDiGraph, road_point: Client | Depot, kind: str
+    ) -> None:
         """
         Inserta un RoadPoint (depósito o cliente) en el grafo de forma incremental.
 
@@ -84,7 +86,7 @@ class GraphAugmenter:
         # Determinar cuál es la arista original correspondiente en el grafo original (self.graph).
         # Esto es necesario para conservar atributos de calle (highway, name, etc.) y la geometría original.
         target_length = road_point.distance_to_u + road_point.distance_to_v
-        
+
         if self.graph.is_multigraph():
             edge_dict = self.graph[u][v]
             best_key = None
@@ -111,10 +113,7 @@ class GraphAugmenter:
 
         # Agregar el nuevo nodo al grafo con sus atributos correspondientes
         graph.add_node(
-            new_node_id,
-            x=road_point.longitude,
-            y=road_point.latitude,
-            kind=kind
+            new_node_id, x=road_point.longitude, y=road_point.latitude, kind=kind
         )
 
         if not existing:
@@ -155,13 +154,14 @@ class GraphAugmenter:
                 graph.add_edge(new_node_id, v, **data_v)
 
             # Registrar la inserción actual
-            self._inserted_nodes[(u, v, key)].append((new_node_id, new_dist, new_fraction))
+            self._inserted_nodes[(u, v, key)].append(
+                (new_node_id, new_dist, new_fraction)
+            )
         else:
             # Caso 2: Ya existen otros puntos en esta arista.
             # Ordenamos todos los puntos de la arista (incluido el nuevo) por su distancia a 'u'.
             all_insertions = sorted(
-                existing + [(new_node_id, new_dist, new_fraction)],
-                key=lambda x: x[1]
+                existing + [(new_node_id, new_dist, new_fraction)], key=lambda x: x[1]
             )
 
             # Encontrar la posición del nuevo punto en la lista ordenada
@@ -223,4 +223,6 @@ class GraphAugmenter:
                 graph.add_edge(new_node_id, next_node, **data_v)
 
             # Registrar la inserción actual
-            self._inserted_nodes[(u, v, key)].append((new_node_id, new_dist, new_fraction))
+            self._inserted_nodes[(u, v, key)].append(
+                (new_node_id, new_dist, new_fraction)
+            )

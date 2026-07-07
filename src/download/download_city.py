@@ -4,15 +4,11 @@ from src.config import CITY, DATA_DIR, GRAPH_PATH, NETWORK_TYPE
 
 
 def download_city():
-    
     """
     Descarga la red vial desde OpenStreetMap.
     """
 
-    G = ox.graph_from_place(
-        CITY,
-        network_type=NETWORK_TYPE
-    )
+    G = ox.graph_from_place(CITY, network_type=NETWORK_TYPE)
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 

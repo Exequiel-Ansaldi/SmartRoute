@@ -99,7 +99,9 @@ def _resolve_node_paths(
     if paths is None:
         raise ValueError("Debe pasarse paths o route_node_paths.")
 
-    return [reconstruct_node_path(_route_to_visit_order(route), paths) for route in routes]
+    return [
+        reconstruct_node_path(_route_to_visit_order(route), paths) for route in routes
+    ]
 
 
 def plot_vehicle_routes(
@@ -128,7 +130,9 @@ def plot_vehicle_routes(
         close=False,
     )
 
-    resolved_node_paths = _resolve_node_paths(graph, routes, paths=paths, route_node_paths=route_node_paths)
+    resolved_node_paths = _resolve_node_paths(
+        graph, routes, paths=paths, route_node_paths=route_node_paths
+    )
     interest_points = _collect_interest_points(routes, graph)
 
     for index, node_path in enumerate(resolved_node_paths):
@@ -209,7 +213,18 @@ def plot_vehicle_routes(
                 linewidths=1.4,
                 zorder=6,
             )
-            ax.text(x, y, "D", ha="center", va="center", color="white", fontsize=10, fontweight="bold", zorder=7, transform=ax.transData)
+            ax.text(
+                x,
+                y,
+                "D",
+                ha="center",
+                va="center",
+                color="white",
+                fontsize=10,
+                fontweight="bold",
+                zorder=7,
+                transform=ax.transData,
+            )
         else:
             ax.scatter(
                 [x],
@@ -221,19 +236,62 @@ def plot_vehicle_routes(
                 linewidths=1.2,
                 zorder=6,
             )
-            ax.text(x, y, "C", ha="center", va="center", color="white", fontsize=8, fontweight="bold", zorder=7, transform=ax.transData)
+            ax.text(
+                x,
+                y,
+                "C",
+                ha="center",
+                va="center",
+                color="white",
+                fontsize=8,
+                fontweight="bold",
+                zorder=7,
+                transform=ax.transData,
+            )
 
-    ax.set_title("Mapa de rutas optimizadas", fontsize=15, fontweight="bold", color="#0f172a", pad=10)
+    ax.set_title(
+        "Mapa de rutas optimizadas",
+        fontsize=15,
+        fontweight="bold",
+        color="#0f172a",
+        pad=10,
+    )
     if routes:
         legend_handles = [
-            Line2D([0], [0], marker="o", color="w", markerfacecolor="#16a34a", markeredgecolor="#111827", markersize=8, label="Cliente"),
-            Line2D([0], [0], marker="D", color="w", markerfacecolor="#0f172a", markeredgecolor="#ffffff", markersize=8, label="Depósito"),
+            Line2D(
+                [0],
+                [0],
+                marker="o",
+                color="w",
+                markerfacecolor="#16a34a",
+                markeredgecolor="#111827",
+                markersize=8,
+                label="Cliente",
+            ),
+            Line2D(
+                [0],
+                [0],
+                marker="D",
+                color="w",
+                markerfacecolor="#0f172a",
+                markeredgecolor="#ffffff",
+                markersize=8,
+                label="Depósito",
+            ),
             Line2D([0], [0], color="#2563eb", lw=2.5, label="Vehículo"),
         ]
-        ax.legend(handles=legend_handles, loc="best", frameon=True, facecolor="white", edgecolor="#e2e8f0")
+        ax.legend(
+            handles=legend_handles,
+            loc="best",
+            frameon=True,
+            facecolor="white",
+            edgecolor="#e2e8f0",
+        )
 
     if save_path is not None:
-        fig.savefig(save_path, dpi=220, bbox_inches="tight", facecolor=fig.get_facecolor())
+        fig.savefig(
+            save_path, dpi=220, bbox_inches="tight", facecolor=fig.get_facecolor()
+        )
 
     if show:
         plt.show()
@@ -273,11 +331,19 @@ def plot_vehicle_routes_animation(
     ax.set_aspect("equal", adjustable="box")
     ax.axis("off")
 
-    resolved_node_paths = _resolve_node_paths(graph, routes, paths=paths, route_node_paths=route_node_paths)
-    route_coordinates = [route_node_path_to_coordinates(graph, node_path) for node_path in resolved_node_paths]
+    resolved_node_paths = _resolve_node_paths(
+        graph, routes, paths=paths, route_node_paths=route_node_paths
+    )
+    route_coordinates = [
+        route_node_path_to_coordinates(graph, node_path)
+        for node_path in resolved_node_paths
+    ]
     interest_points = _collect_interest_points(routes, graph)
 
-    colors = [ROUTE_COLORS[index % len(ROUTE_COLORS)] for index in range(len(route_coordinates))]
+    colors = [
+        ROUTE_COLORS[index % len(ROUTE_COLORS)]
+        for index in range(len(route_coordinates))
+    ]
     car_markers = []
 
     for index, coordinates in enumerate(route_coordinates):
@@ -287,7 +353,16 @@ def plot_vehicle_routes_animation(
         xs = [coord[0] for coord in coordinates]
         ys = [coord[1] for coord in coordinates]
         ax.plot(xs, ys, color=colors[index], linewidth=2.8, alpha=0.95, zorder=3)
-        marker = ax.scatter([], [], s=140, marker="o", color=colors[index], edgecolors="#111827", linewidths=1.2, zorder=5)
+        marker = ax.scatter(
+            [],
+            [],
+            s=140,
+            marker="o",
+            color=colors[index],
+            edgecolors="#111827",
+            linewidths=1.2,
+            zorder=5,
+        )
         car_markers.append(marker)
 
     for node_id, kind, color in interest_points:
@@ -298,13 +373,54 @@ def plot_vehicle_routes_animation(
             continue
 
         if kind == "depot":
-            ax.scatter([x], [y], s=180, marker="D", color="#0f172a", edgecolors="#ffffff", linewidths=1.4, zorder=6)
-            ax.text(x, y, "D", ha="center", va="center", color="white", fontsize=10, fontweight="bold", zorder=7)
+            ax.scatter(
+                [x],
+                [y],
+                s=180,
+                marker="D",
+                color="#0f172a",
+                edgecolors="#ffffff",
+                linewidths=1.4,
+                zorder=6,
+            )
+            ax.text(
+                x,
+                y,
+                "D",
+                ha="center",
+                va="center",
+                color="white",
+                fontsize=10,
+                fontweight="bold",
+                zorder=7,
+            )
         else:
-            ax.scatter([x], [y], s=120, marker="o", color=color, edgecolors="#111827", linewidths=1.2, zorder=6)
-            ax.text(x, y, "C", ha="center", va="center", color="white", fontsize=8, fontweight="bold", zorder=7)
+            ax.scatter(
+                [x],
+                [y],
+                s=120,
+                marker="o",
+                color=color,
+                edgecolors="#111827",
+                linewidths=1.2,
+                zorder=6,
+            )
+            ax.text(
+                x,
+                y,
+                "C",
+                ha="center",
+                va="center",
+                color="white",
+                fontsize=8,
+                fontweight="bold",
+                zorder=7,
+            )
 
-    frame_count = max((len(coordinates) for coordinates in route_coordinates if coordinates), default=1)
+    frame_count = max(
+        (len(coordinates) for coordinates in route_coordinates if coordinates),
+        default=1,
+    )
 
     def update(frame: int):
         for marker, coordinates in zip(car_markers, route_coordinates):
@@ -314,8 +430,16 @@ def plot_vehicle_routes_animation(
             marker.set_offsets([(coordinates[idx][0], coordinates[idx][1])])
         return car_markers
 
-    ax.set_title("Animación de rutas", fontsize=15, fontweight="bold", color="#0f172a", pad=10)
-    animation = FuncAnimation(fig, update, frames=range(frame_count), interval=1000 // max(fps, 1), repeat=False)
+    ax.set_title(
+        "Animación de rutas", fontsize=15, fontweight="bold", color="#0f172a", pad=10
+    )
+    animation = FuncAnimation(
+        fig,
+        update,
+        frames=range(frame_count),
+        interval=1000 // max(fps, 1),
+        repeat=False,
+    )
 
     if output_path is None:
         output_path = Path("outputs/routes.gif")

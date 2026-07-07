@@ -1,2 +1,1 @@
 """Dashboard interactivo del proyecto."""
-

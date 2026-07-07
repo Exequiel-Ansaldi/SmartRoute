@@ -27,4 +27,3 @@ def reconstruct_edge_path(
     """
     node_path = reconstruct_node_path(visit_order, paths)
     return list(zip(node_path, node_path[1:]))
-

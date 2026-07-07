@@ -12,11 +12,12 @@ from src.utils.load_graph import load_graph
 from src.experimental.dijkstra import dijkstra_path_and_length
 from src.experimental.astar import astar_shortest_path
 
+
 def run_benchmark(num_queries=100, seed=42):
     print("Cargando grafo...")
     graph = load_graph()
     nodes = list(graph.nodes)
-    
+
     # Seleccionar pares de nodos para consultas
     random.seed(seed)
     queries = []
@@ -69,13 +70,23 @@ def run_benchmark(num_queries=100, seed=42):
 
     print("\n--- RESULTADOS DEL BENCHMARK ---")
     print(f"Número de consultas: {num_queries}")
-    print(f"Grafos conexos/rutas encontradas (Dijkstra/A*/NetworkX): {dijkstra_success}/{astar_success}/{nx_success}")
+    print(
+        f"Grafos conexos/rutas encontradas (Dijkstra/A*/NetworkX): {dijkstra_success}/{astar_success}/{nx_success}"
+    )
     print("-" * 75)
-    print(f"{'Algoritmo':<20} | {'Tiempo Total (s)':<18} | {'Promedio/Consulta (ms)':<22} | {'Memoria Pico (KB)':<18}")
+    print(
+        f"{'Algoritmo':<20} | {'Tiempo Total (s)':<18} | {'Promedio/Consulta (ms)':<22} | {'Memoria Pico (KB)':<18}"
+    )
     print("-" * 75)
-    print(f"{'Custom Dijkstra':<20} | {t_dijkstra:<18.4f} | {t_dijkstra * 1000 / num_queries:<22.4f} | {peak_dijkstra / 1024:<18.2f}")
-    print(f"{'Custom A*':<20} | {t_astar:<18.4f} | {t_astar * 1000 / num_queries:<22.4f} | {peak_astar / 1024:<18.2f}")
-    print(f"{'NetworkX (Dijkstra)':<20} | {t_nx:<18.4f} | {t_nx * 1000 / num_queries:<22.4f} | {peak_nx / 1024:<18.2f}")
+    print(
+        f"{'Custom Dijkstra':<20} | {t_dijkstra:<18.4f} | {t_dijkstra * 1000 / num_queries:<22.4f} | {peak_dijkstra / 1024:<18.2f}"
+    )
+    print(
+        f"{'Custom A*':<20} | {t_astar:<18.4f} | {t_astar * 1000 / num_queries:<22.4f} | {peak_astar / 1024:<18.2f}"
+    )
+    print(
+        f"{'NetworkX (Dijkstra)':<20} | {t_nx:<18.4f} | {t_nx * 1000 / num_queries:<22.4f} | {peak_nx / 1024:<18.2f}"
+    )
     print("-" * 75)
 
 

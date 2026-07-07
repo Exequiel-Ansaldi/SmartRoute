@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import TypeAlias
 
-
 NodeId: TypeAlias = int
 Edge: TypeAlias = tuple[NodeId, NodeId]
 

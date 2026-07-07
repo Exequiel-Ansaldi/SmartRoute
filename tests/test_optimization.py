@@ -109,9 +109,7 @@ class TestORToolsVRP(unittest.TestCase):
         )
         nodes = ["depot", "client_1", "client_2", "client_3"]
 
-        solution = solve_vrp_ortools(
-            matrix, nodes, vehicle_capacity=2, num_vehicles=2
-        )
+        solution = solve_vrp_ortools(matrix, nodes, vehicle_capacity=2, num_vehicles=2)
 
         self.assertEqual(solution.unassigned, [])
         self.assertGreaterEqual(len(solution.routes), 1)

@@ -41,11 +41,11 @@ def dijkstra(
     # Inicializar estructuras
     distances = {source: 0.0}
     predecessors = {}
-    
+
     # Cola de prioridad: almacena tuplas (distancia, nodo)
     counter = count()
     pq = [(0.0, next(counter), source)]
-    
+
     # Conjunto de nodos ya visitados/consolidados
     visited = set()
 
@@ -117,6 +117,6 @@ def dijkstra_path_and_length(
     while curr is not None:
         path.append(curr)
         curr = predecessors.get(curr)
-    
+
     path.reverse()
     return distances[target], path

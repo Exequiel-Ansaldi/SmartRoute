@@ -2,6 +2,7 @@ from collections import Counter
 import networkx as nx
 from src.utils.load_graph import load_graph
 
+
 def analyze_graph():
     G = load_graph()
     print("=" * 60)
@@ -99,13 +100,12 @@ def analyze_graph():
     edges.sort(
         key=lambda edge: edge[2].get("length", 0),
         reverse=True,
-)
+    )
 
     print("\nTop 10 calles más largas\n")
 
     for edge in edges[:10]:
         print(f"{edge[2]['length']:.2f} m")
-
 
     # ==========================
     # Calles sin nombre
@@ -128,11 +128,7 @@ def analyze_graph():
 
     degrees = dict(G.degree())
 
-    top_nodes = sorted(
-        degrees.items(),
-        key=lambda x: x[1],
-        reverse=True
-    )
+    top_nodes = sorted(degrees.items(), key=lambda x: x[1], reverse=True)
     print("\nTop 10 nodos más conectados\n")
 
     for node, degree in top_nodes[:10]:
@@ -181,6 +177,7 @@ def analyze_graph():
 
     print(f"Latitud : {centroid_y}")
     print(f"Longitud: {centroid_x}")
+
 
 if __name__ == "__main__":
     analyze_graph()

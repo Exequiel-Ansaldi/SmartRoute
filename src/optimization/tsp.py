@@ -114,4 +114,3 @@ def solve_tsp(
         route=[nodes[i] for i in route_indices],
         total_cost=calculate_route_cost(matrix, route_indices),
     )
-

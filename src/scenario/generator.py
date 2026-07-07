@@ -74,14 +74,10 @@ class ScenarioGenerator:
         return RoadPoint(
             latitude=point.y,
             longitude=point.x,
-
             edge=(u, v),
-
             edge_fraction=edge_fraction,
-
             node_u=u,
             node_v=v,
-
             distance_to_u=distance,
             distance_to_v=edge_length - distance,
         )
@@ -98,17 +94,12 @@ class ScenarioGenerator:
             clients.append(
                 Client(
                     id=f"client_{i + 1}",
-
                     latitude=road_point.latitude,
                     longitude=road_point.longitude,
-
                     edge=road_point.edge,
-
                     edge_fraction=road_point.edge_fraction,
-
                     node_u=road_point.node_u,
                     node_v=road_point.node_v,
-
                     distance_to_u=road_point.distance_to_u,
                     distance_to_v=road_point.distance_to_v,
                 )
@@ -125,14 +116,10 @@ class ScenarioGenerator:
         return Depot(
             latitude=road_point.latitude,
             longitude=road_point.longitude,
-
             edge=road_point.edge,
-
             edge_fraction=road_point.edge_fraction,
-
             node_u=road_point.node_u,
             node_v=road_point.node_v,
-
             distance_to_u=road_point.distance_to_u,
             distance_to_v=road_point.distance_to_v,
         )

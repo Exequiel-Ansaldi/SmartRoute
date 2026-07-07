@@ -75,9 +75,13 @@ class TestDijkstra(unittest.TestCase):
         graph = nx.MultiDiGraph()
         graph.add_edge("a", "b")
 
-        custom_len, custom_path = dijkstra_path_and_length(graph, "a", "b", weight="length")
+        custom_len, custom_path = dijkstra_path_and_length(
+            graph, "a", "b", weight="length"
+        )
 
-        self.assertEqual(custom_len, nx.shortest_path_length(graph, "a", "b", weight="length"))
+        self.assertEqual(
+            custom_len, nx.shortest_path_length(graph, "a", "b", weight="length")
+        )
         self.assertEqual(custom_path, ["a", "b"])
 
 

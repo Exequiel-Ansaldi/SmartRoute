@@ -4,23 +4,25 @@ import networkx as nx
 
 from src.config import ASTAR_MAX_SPEED_KPH
 
+
 def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """
     Calcula la distancia de círculo máximo (Haversine) en metros entre dos
     coordenadas geográficas (latitud, longitud).
     """
     R = 6371000.0  # Radio de la Tierra en metros
-    
+
     phi1 = math.radians(lat1)
     phi2 = math.radians(lat2)
     delta_phi = math.radians(lat2 - lat1)
     delta_lambda = math.radians(lon2 - lon1)
-    
-    a = (math.sin(delta_phi / 2.0) ** 2 +
-         math.cos(phi1) * math.cos(phi2) *
-         math.sin(delta_lambda / 2.0) ** 2)
+
+    a = (
+        math.sin(delta_phi / 2.0) ** 2
+        + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2.0) ** 2
+    )
     c = 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0 - a))
-    
+
     return R * c
 
 
@@ -58,13 +60,16 @@ def astar_shortest_path(
 
     # Si el destino no tiene coordenadas, caemos en heurística nula (Dijkstra)
     if target_lat is None or target_lon is None:
+
         def heuristic(node):
             return 0.0
+
     else:
         # Velocidad máxima de diseño para mantener admisibilidad al calcular tiempo (m/s)
         max_speed_mps = ASTAR_MAX_SPEED_KPH / 3.6
 
         if weight == "travel_time":
+
             def heuristic(node):
                 n_data = graph.nodes[node]
                 lat = n_data.get("y")
@@ -73,7 +78,9 @@ def astar_shortest_path(
                     return 0.0
                 dist_m = haversine_distance(lat, lon, target_lat, target_lon)
                 return dist_m / max_speed_mps
+
         else:
+
             def heuristic(node):
                 n_data = graph.nodes[node]
                 lat = n_data.get("y")
@@ -86,7 +93,7 @@ def astar_shortest_path(
     # f_score = g_score + heuristic
     start_h = heuristic(source)
     pq = [(start_h, 0.0, source)]
-    
+
     g_score = {source: 0.0}
     predecessors = {}
     visited = set()

@@ -29,9 +29,7 @@ class TestGraphAugmenter(unittest.TestCase):
     def test_augmented_graph_node_count(self):
         """✓ El grafo aumentado tiene 11 nodos más (1 depósito + 10 clientes)."""
         expected_node_count = self.graph.number_of_nodes() + 11
-        self.assertEqual(
-            self.augmented_graph.number_of_nodes(), expected_node_count
-        )
+        self.assertEqual(self.augmented_graph.number_of_nodes(), expected_node_count)
 
     def test_depot_exists_as_node(self):
         """✓ El depósito existe como nodo y tiene los atributos correctos."""
@@ -64,9 +62,7 @@ class TestGraphAugmenter(unittest.TestCase):
     def test_no_disconnected_components_added(self):
         """✓ No quedaron componentes desconectadas nuevas (el número de componentes conexas no aumentó)."""
         if self.graph.is_directed():
-            original_components = len(
-                list(nx.weakly_connected_components(self.graph))
-            )
+            original_components = len(list(nx.weakly_connected_components(self.graph)))
             augmented_components = len(
                 list(nx.weakly_connected_components(self.augmented_graph))
             )

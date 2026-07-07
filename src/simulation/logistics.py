@@ -130,7 +130,9 @@ def simulate_routes(
             base_travel_time = float(time_matrix[origin_idx, destination_idx])
 
             if base_travel_time == float("inf"):
-                raise ValueError(f"No hay tiempo finito entre {origin} y {destination}.")
+                raise ValueError(
+                    f"No hay tiempo finito entre {origin} y {destination}."
+                )
 
             extra_delay = 0.0
             if congestion_model is not None:
@@ -205,13 +207,12 @@ def simulate_routes(
                     events.append(wait_event)
                     waiting_time_total += current_time - wait_start
 
-                    if (
-                        current_time - wait_start
-                        >= bottleneck_delay_threshold_seconds
-                    ):
+                    if current_time - wait_start >= bottleneck_delay_threshold_seconds:
                         bottlenecks.append(wait_event)
 
-            service_time = service_by_node.get(destination, DEFAULT_SERVICE_TIME_SECONDS)
+            service_time = service_by_node.get(
+                destination, DEFAULT_SERVICE_TIME_SECONDS
+            )
             if service_time > 0:
                 service_start = current_time
                 current_time += service_time
@@ -248,4 +249,3 @@ def simulate_routes(
         bottlenecks=bottlenecks,
         total_time=total_time,
     )
-

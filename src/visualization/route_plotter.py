@@ -2,16 +2,16 @@ from collections.abc import Sequence
 from pathlib import Path
 
 import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation, PillowWriter
-from matplotlib.lines import Line2D
+import matplotlib.pyplot as plt  # noqa: E402
 import networkx as nx
 import osmnx as ox
+from matplotlib.animation import FuncAnimation, PillowWriter  # noqa: E402
+from matplotlib.lines import Line2D  # noqa: E402
 
-from src.optimization.reconstruct import reconstruct_node_path
-from src.optimization.vrp import VehicleRoute
+matplotlib.use("Agg")
+
+from src.optimization.reconstruct import reconstruct_node_path  # noqa: E402
+from src.optimization.vrp import VehicleRoute  # noqa: E402
 
 ROUTE_COLORS = [
     "#2563eb",

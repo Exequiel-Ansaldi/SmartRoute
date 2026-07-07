@@ -6,9 +6,9 @@ import numpy as np
 
 matplotlib.use("Agg")
 
-from src.optimization.vrp import VehicleRoute
-from src.simulation.logistics import simulate_routes
-from src.visualization.route_plotter import (
+from src.optimization.vrp import VehicleRoute  # noqa: E402
+from src.simulation.logistics import simulate_routes  # noqa: E402
+from src.visualization.route_plotter import (  # noqa: E402
     plot_vehicle_routes,
     route_node_path_to_coordinates,
 )

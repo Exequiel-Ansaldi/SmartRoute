@@ -5,6 +5,7 @@ import numpy as np
 from src.optimization.reconstruct import reconstruct_edge_path, reconstruct_node_path
 from src.optimization.tsp import calculate_route_cost, solve_tsp, two_opt
 from src.optimization.vrp import solve_cvrp_nearest_neighbor
+from src.optimization.ortools_solver import solve_vrp_ortools
 
 
 class TestTSP(unittest.TestCase):
@@ -90,10 +91,6 @@ class TestCVRP(unittest.TestCase):
         )
 
         self.assertEqual(len(solution.unassigned), 1)
-
-
-from src.optimization.ortools_solver import solve_vrp_ortools
-from src.optimization.vrp import solve_cvrp_nearest_neighbor
 
 
 class TestORToolsVRP(unittest.TestCase):

@@ -1,6 +1,5 @@
 import unittest
-import numpy as np
-import networkx as nx
+
 from src.utils.load_graph import load_graph
 from src.scenario.generator import ScenarioGenerator
 from src.graph.augment_graph import GraphAugmenter

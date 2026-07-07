@@ -1,16 +1,12 @@
 import random
-import sys
 import time
 import tracemalloc
-from pathlib import Path
+
 import networkx as nx
 
-from src.utils.load_graph import load_graph
-from src.experimental.dijkstra import dijkstra_path_and_length
 from src.experimental.astar import astar_shortest_path
-from src.utils.load_graph import load_graph
 from src.experimental.dijkstra import dijkstra_path_and_length
-from src.experimental.astar import astar_shortest_path
+from src.utils.load_graph import load_graph
 
 
 def run_benchmark(num_queries=100, seed=42):
@@ -34,7 +30,7 @@ def run_benchmark(num_queries=100, seed=42):
     t0 = time.perf_counter()
     dijkstra_success = 0
     for u, v in queries:
-        length, path = dijkstra_path_and_length(graph, u, v, weight="length")
+        length, _ = dijkstra_path_and_length(graph, u, v, weight="length")
         if length != float("inf"):
             dijkstra_success += 1
     t_dijkstra = time.perf_counter() - t0
@@ -46,7 +42,7 @@ def run_benchmark(num_queries=100, seed=42):
     t0 = time.perf_counter()
     astar_success = 0
     for u, v in queries:
-        length, path = astar_shortest_path(graph, u, v, weight="length")
+        length, _ = astar_shortest_path(graph, u, v, weight="length")
         if length != float("inf"):
             astar_success += 1
     t_astar = time.perf_counter() - t0
@@ -59,8 +55,7 @@ def run_benchmark(num_queries=100, seed=42):
     nx_success = 0
     for u, v in queries:
         try:
-            # nx.bidirectional_shortest_path or standard shortest_path
-            path = nx.shortest_path(graph, source=u, target=v, weight="length")
+            nx.shortest_path(graph, source=u, target=v, weight="length")
             nx_success += 1
         except nx.NetworkXNoPath:
             pass
@@ -71,21 +66,26 @@ def run_benchmark(num_queries=100, seed=42):
     print("\n--- RESULTADOS DEL BENCHMARK ---")
     print(f"Número de consultas: {num_queries}")
     print(
-        f"Grafos conexos/rutas encontradas (Dijkstra/A*/NetworkX): {dijkstra_success}/{astar_success}/{nx_success}"
+        "Grafos conexos/rutas encontradas "
+        f"(Dijkstra/A*/NetworkX): {dijkstra_success}/{astar_success}/{nx_success}"
     )
     print("-" * 75)
     print(
-        f"{'Algoritmo':<20} | {'Tiempo Total (s)':<18} | {'Promedio/Consulta (ms)':<22} | {'Memoria Pico (KB)':<18}"
+        f"{'Algoritmo':<20} | {'Tiempo Total (s)':<18} | "
+        f"{'Promedio/Consulta (ms)':<22} | {'Memoria Pico (KB)':<18}"
     )
     print("-" * 75)
     print(
-        f"{'Custom Dijkstra':<20} | {t_dijkstra:<18.4f} | {t_dijkstra * 1000 / num_queries:<22.4f} | {peak_dijkstra / 1024:<18.2f}"
+        f"{'Custom Dijkstra':<20} | {t_dijkstra:<18.4f} | "
+        f"{t_dijkstra * 1000 / num_queries:<22.4f} | {peak_dijkstra / 1024:<18.2f}"
     )
     print(
-        f"{'Custom A*':<20} | {t_astar:<18.4f} | {t_astar * 1000 / num_queries:<22.4f} | {peak_astar / 1024:<18.2f}"
+        f"{'Custom A*':<20} | {t_astar:<18.4f} | "
+        f"{t_astar * 1000 / num_queries:<22.4f} | {peak_astar / 1024:<18.2f}"
     )
     print(
-        f"{'NetworkX (Dijkstra)':<20} | {t_nx:<18.4f} | {t_nx * 1000 / num_queries:<22.4f} | {peak_nx / 1024:<18.2f}"
+        f"{'NetworkX (Dijkstra)':<20} | {t_nx:<18.4f} | "
+        f"{t_nx * 1000 / num_queries:<22.4f} | {peak_nx / 1024:<18.2f}"
     )
     print("-" * 75)
 

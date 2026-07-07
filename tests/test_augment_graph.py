@@ -50,8 +50,9 @@ class TestGraphAugmenter(unittest.TestCase):
             self.assertEqual(node_data["y"], client.latitude)
 
     def test_original_edges_still_connected(self):
-        """✓ Todas las aristas originales siguen conectadas (hay camino alternativo a través de los nodos insertados)."""
-        # Para cada arista eliminada, verificamos que exista un camino entre sus extremos en el grafo aumentado
+        """✓ Todas las aristas originales siguen conectadas."""
+        # Para cada arista eliminada, verificamos que exista un camino
+        # entre sus extremos en el grafo aumentado.
         for edge_tuple in self.result.removed_edges:
             u, v = edge_tuple[0], edge_tuple[1]
             self.assertTrue(
@@ -60,7 +61,7 @@ class TestGraphAugmenter(unittest.TestCase):
             )
 
     def test_no_disconnected_components_added(self):
-        """✓ No quedaron componentes desconectadas nuevas (el número de componentes conexas no aumentó)."""
+        """✓ No quedaron componentes desconectadas nuevas."""
         if self.graph.is_directed():
             original_components = len(list(nx.weakly_connected_components(self.graph)))
             augmented_components = len(
@@ -74,7 +75,7 @@ class TestGraphAugmenter(unittest.TestCase):
         self.assertEqual(augmented_components, original_components)
 
     def test_inserted_nodes_have_exactly_two_connections(self):
-        """✓ Cada nodo insertado tiene exactamente dos conexiones (grado total de entrada + salida)."""
+        """✓ Cada nodo insertado tiene exactamente dos conexiones."""
         for node_id in self.result.inserted_nodes:
             # Grado total = in_degree + out_degree en un grafo dirigido
             total_degree = self.augmented_graph.degree(node_id)

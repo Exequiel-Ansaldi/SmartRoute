@@ -1,5 +1,5 @@
 import unittest
-import networkx as nx
+
 from src.utils.load_graph import load_graph
 from src.scenario.generator import ScenarioGenerator
 from src.graph.augment_graph import GraphAugmenter
@@ -23,8 +23,8 @@ class TestAStar(unittest.TestCase):
 
     def test_haversine_distance(self):
         """✓ La fórmula de Haversine devuelve valores correctos y positivos."""
-        # Distancia aproximada entre Buenos Aires (-34.6037, -58.3816) y Concordia (-31.3922, -58.0201)
-        # Debería ser alrededor de 360 km
+        # Distancia aproximada entre Buenos Aires (-34.6037, -58.3816)
+        # y Concordia (-31.3922, -58.0201). Debería ser alrededor de 360 km.
         dist = haversine_distance(-34.6037, -58.3816, -31.3922, -58.0201)
         self.assertTrue(350000 < dist < 370000)
 

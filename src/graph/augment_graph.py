@@ -1,9 +1,11 @@
 from collections import defaultdict
 from dataclasses import dataclass
+from typing import cast
+
 import networkx as nx
 from shapely.ops import substring
-from typing import cast
-from src.scenario.entities import Client, Depot, RoadPoint, Scenario
+
+from src.scenario.entities import Client, Depot, Scenario
 
 
 @dataclass(slots=True)
@@ -83,8 +85,8 @@ class GraphAugmenter:
         new_dist = road_point.distance_to_u
         new_fraction = road_point.edge_fraction
 
-        # Determinar cuál es la arista original correspondiente en el grafo original (self.graph).
-        # Esto es necesario para conservar atributos de calle (highway, name, etc.) y la geometría original.
+        # Determinar la arista original correspondiente en el grafo original.
+        # Esto conserva atributos de calle y la geometría original.
         target_length = road_point.distance_to_u + road_point.distance_to_v
 
         if self.graph.is_multigraph():

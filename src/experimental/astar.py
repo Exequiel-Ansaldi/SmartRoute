@@ -95,7 +95,7 @@ def astar_shortest_path(
     pq = [(start_h, 0.0, source)]
 
     g_score = {source: 0.0}
-    predecessors = {}
+    predecessors: dict[str, str | None] = {}
     visited = set()
 
     while pq:

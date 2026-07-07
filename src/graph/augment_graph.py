@@ -25,7 +25,9 @@ class GraphAugmenter:
 
     def __init__(self, graph: nx.MultiDiGraph):
         self.graph = graph
-        self._inserted_nodes = defaultdict(list)
+        self._inserted_nodes: defaultdict[
+            tuple[str, str, object | None], list[tuple[str, float, float]]
+        ] = defaultdict(list)
 
     def augment(self, scenario: Scenario) -> AugmentationResult:
         """

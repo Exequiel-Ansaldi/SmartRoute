@@ -110,7 +110,7 @@ class CostMatrixGenerator:
         matrix = np.full((N, N), float("inf"))
 
         # Inicializar diccionario de caminos
-        paths = {u: {} for u in nodes_list}
+        paths: dict[str, dict[str, list[str]]] = {u: {} for u in nodes_list}
 
         # Ejecutar Dijkstra de una sola fuente para cada nodo en nodes_list
         for i, u in enumerate(nodes_list):
@@ -133,8 +133,8 @@ class CostMatrixGenerator:
                     matrix[i, j] = distances[v]
 
                     # Reconstruir camino desde v hasta u usando predecessors
-                    path = []
-                    curr = v
+                    path: list[str] = []
+                    curr: str | None = v
                     while curr is not None:
                         path.append(curr)
                         curr = predecessors.get(curr)

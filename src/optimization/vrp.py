@@ -70,7 +70,7 @@ def solve_cvrp_nearest_neighbor(
     unvisited.remove(depot_index)
 
     if num_vehicles is not None and num_vehicles > 1:
-        routes: list[VehicleRoute] = []
+        multi_vehicle_routes: list[VehicleRoute] = []
         route_states: list[RouteState] = [
             {"indices": [depot_index], "load": 0.0, "current": depot_index}
             for _ in range(num_vehicles)
@@ -110,7 +110,7 @@ def solve_cvrp_nearest_neighbor(
 
             route_indices.append(depot_index)
             total_cost = calculate_route_cost(matrix, route_indices)
-            routes.append(
+            multi_vehicle_routes.append(
                 VehicleRoute(
                     vehicle_id=vehicle_id,
                     route_indices=route_indices,
@@ -131,8 +131,8 @@ def solve_cvrp_nearest_neighbor(
                 )
 
         return VRPSolution(
-            routes=routes,
-            total_cost=sum(route.total_cost for route in routes),
+            routes=multi_vehicle_routes,
+            total_cost=sum(route.total_cost for route in multi_vehicle_routes),
             unassigned=[],
         )
 

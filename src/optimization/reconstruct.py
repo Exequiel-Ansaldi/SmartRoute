@@ -1,10 +1,10 @@
 def reconstruct_node_path(
     visit_order: list[str], paths: dict[str, dict[str, list]]
-) -> list:
+) -> list[str | int]:
     """
     Traduce una secuencia optimizada de visitas al camino real de nodos del grafo.
     """
-    full_path = []
+    full_path: list[str | int] = []
 
     for origin, destination in zip(visit_order, visit_order[1:]):
         segment = paths.get(origin, {}).get(destination, [])
@@ -21,7 +21,7 @@ def reconstruct_node_path(
 
 def reconstruct_edge_path(
     visit_order: list[str], paths: dict[str, dict[str, list]]
-) -> list[tuple]:
+) -> list[tuple[str | int, str | int]]:
     """
     Traduce una secuencia optimizada de visitas a aristas consecutivas del grafo.
     """

@@ -5,7 +5,7 @@ import networkx as nx
 import numpy as np
 from src.config import DEFAULT_SPEED_KPH, DEFAULT_SPEEDS_KPH
 from src.scenario.entities import Scenario
-from src.routing.dijkstra import dijkstra
+from src.experimental.dijkstra import dijkstra
 
 
 def parse_maxspeed(maxspeed_val) -> float | None:

@@ -1,11 +1,16 @@
 import random
+import sys
 import time
 import tracemalloc
+from pathlib import Path
 import networkx as nx
-from src.utils.load_graph import load_graph
-from src.routing.dijkstra import dijkstra_path_and_length
-from src.routing.astar import astar_shortest_path
 
+from src.utils.load_graph import load_graph
+from src.experimental.dijkstra import dijkstra_path_and_length
+from src.experimental.astar import astar_shortest_path
+from src.utils.load_graph import load_graph
+from src.experimental.dijkstra import dijkstra_path_and_length
+from src.experimental.astar import astar_shortest_path
 
 def run_benchmark(num_queries=100, seed=42):
     print("Cargando grafo...")

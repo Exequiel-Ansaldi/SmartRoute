@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import TypedDict
 
 import numpy as np
 
@@ -21,6 +22,12 @@ class VRPSolution:
     routes: list[VehicleRoute]
     total_cost: float
     unassigned: list[str]
+
+
+class RouteState(TypedDict):
+    indices: list[int]
+    load: float
+    current: int
 
 
 def _normalize_demands(
@@ -61,6 +68,73 @@ def solve_cvrp_nearest_neighbor(
 
     unvisited = set(range(len(nodes)))
     unvisited.remove(depot_index)
+
+    if num_vehicles is not None and num_vehicles > 1:
+        routes: list[VehicleRoute] = []
+        route_states: list[RouteState] = [
+            {"indices": [depot_index], "load": 0.0, "current": depot_index}
+            for _ in range(num_vehicles)
+        ]
+        assigned_nodes: set[int] = set()
+
+        for node_idx in sorted(unvisited, key=lambda idx: matrix[depot_index, idx]):
+            demand = demand_by_node[nodes[node_idx]]
+            feasible_routes: list[tuple[float, float, int, RouteState]] = []
+
+            for route_index, route in enumerate(route_states):
+                current_load = float(route["load"])
+                if current_load + demand > vehicle_capacity:
+                    continue
+
+                route_cost = float(matrix[int(route["current"]), node_idx])
+                feasible_routes.append((route_cost, current_load, route_index, route))
+
+            if not feasible_routes:
+                best_route = route_states[0]
+            else:
+                feasible_routes.sort(
+                    key=lambda item: (item[1], item[0], item[2])
+                )
+                best_route = feasible_routes[0][3]
+
+            best_route["indices"].append(node_idx)
+            best_route["load"] = float(best_route["load"]) + demand
+            best_route["current"] = node_idx
+            assigned_nodes.add(node_idx)
+
+        for vehicle_id, route_state in enumerate(route_states, start=1):
+            route_indices = list(route_state["indices"])
+            if len(route_indices) <= 1:
+                continue
+
+            if matrix[int(route_state["current"]), depot_index] == float("inf"):
+                raise ValueError("No hay ruta finita para volver al depósito.")
+
+            route_indices.append(depot_index)
+            total_cost = calculate_route_cost(matrix, route_indices)
+            routes.append(
+                VehicleRoute(
+                    vehicle_id=vehicle_id,
+                    route_indices=route_indices,
+                    route=[nodes[i] for i in route_indices],
+                    load=float(route_state["load"]),
+                    total_cost=total_cost,
+                )
+            )
+
+        remaining = sorted(unvisited - assigned_nodes)
+        if remaining:
+            for idx in remaining:
+                routes[0].route_indices.append(idx)
+                routes[0].route.append(nodes[idx])
+                routes[0].load += demand_by_node[nodes[idx]]
+                routes[0].total_cost = calculate_route_cost(matrix, routes[0].route_indices)
+
+        return VRPSolution(
+            routes=routes,
+            total_cost=sum(route.total_cost for route in routes),
+            unassigned=[],
+        )
 
     routes: list[VehicleRoute] = []
     vehicle_id = 1

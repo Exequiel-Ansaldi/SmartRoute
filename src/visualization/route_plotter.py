@@ -1,7 +1,12 @@
 from collections.abc import Sequence
 from pathlib import Path
 
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation, PillowWriter
+from matplotlib.lines import Line2D
 import networkx as nx
 import osmnx as ox
 
@@ -9,14 +14,14 @@ from src.optimization.reconstruct import reconstruct_node_path
 from src.optimization.vrp import VehicleRoute
 
 ROUTE_COLORS = [
-    "#e41a1c",
-    "#377eb8",
-    "#4daf4a",
-    "#984ea3",
-    "#ff7f00",
-    "#a65628",
-    "#f781bf",
-    "#999999",
+    "#2563eb",
+    "#16a34a",
+    "#f59e0b",
+    "#8b5cf6",
+    "#ef4444",
+    "#0f766e",
+    "#ec4899",
+    "#64748b",
 ]
 
 
@@ -58,6 +63,45 @@ def _route_to_visit_order(route: VehicleRoute | Sequence[str]) -> list[str]:
     return list(route)
 
 
+def _collect_interest_points(
+    routes: Sequence[VehicleRoute | Sequence[str]],
+    graph: nx.MultiDiGraph,
+) -> list[tuple[str, str, str]]:
+    points: list[tuple[str, str, str]] = []
+    seen_nodes: set[str] = set()
+
+    for index, route in enumerate(routes):
+        visit_order = _route_to_visit_order(route)
+        if not visit_order:
+            continue
+
+        color = ROUTE_COLORS[index % len(ROUTE_COLORS)]
+        for node_id in visit_order:
+            if node_id in seen_nodes or node_id not in graph.nodes:
+                continue
+
+            kind = "depot" if node_id == visit_order[0] else "client"
+            points.append((node_id, kind, color))
+            seen_nodes.add(node_id)
+
+    return points
+
+
+def _resolve_node_paths(
+    graph: nx.MultiDiGraph,
+    routes: Sequence[VehicleRoute | Sequence[str]],
+    paths: dict[str, dict[str, list]] | None = None,
+    route_node_paths: Sequence[Sequence] | None = None,
+) -> list[list]:
+    if route_node_paths is not None:
+        return [list(path) for path in route_node_paths]
+
+    if paths is None:
+        raise ValueError("Debe pasarse paths o route_node_paths.")
+
+    return [reconstruct_node_path(_route_to_visit_order(route), paths) for route in routes]
+
+
 def plot_vehicle_routes(
     graph: nx.MultiDiGraph,
     routes: Sequence[VehicleRoute | Sequence[str]],
@@ -67,11 +111,7 @@ def plot_vehicle_routes(
     save_path: str | Path | None = None,
 ):
     """
-    Grafica rutas de uno o varios vehículos sobre el grafo.
-
-    Si se pasan `paths`, cada ruta se interpreta como orden de visitas y se
-    reconstruye el camino real. Si se pasan `route_node_paths`, se usan esos
-    caminos directamente.
+    Grafica rutas con estilos más claros y marcadores visibles para cada vehículo.
     """
     plot_graph = graph
     if "crs" not in plot_graph.graph:
@@ -82,22 +122,14 @@ def plot_vehicle_routes(
         plot_graph,
         node_size=0,
         edge_color="#d9d9d9",
-        edge_linewidth=0.6,
+        edge_linewidth=0.7,
         bgcolor="white",
         show=False,
         close=False,
     )
 
-    if route_node_paths is None:
-        if paths is None:
-            raise ValueError("Debe pasarse paths o route_node_paths.")
-
-        resolved_node_paths = [
-            reconstruct_node_path(_route_to_visit_order(route), paths)
-            for route in routes
-        ]
-    else:
-        resolved_node_paths = [list(path) for path in route_node_paths]
+    resolved_node_paths = _resolve_node_paths(graph, routes, paths=paths, route_node_paths=route_node_paths)
+    interest_points = _collect_interest_points(routes, graph)
 
     for index, node_path in enumerate(resolved_node_paths):
         if len(node_path) < 2:
@@ -113,9 +145,31 @@ def plot_vehicle_routes(
             ys,
             color=color,
             linewidth=2.8,
-            alpha=0.9,
+            alpha=0.95,
+            solid_capstyle="round",
             label=f"Vehículo {index + 1}",
             zorder=3,
+        )
+
+        ax.scatter(
+            [xs[0]],
+            [ys[0]],
+            color="#ffffff",
+            edgecolors=color,
+            linewidths=1.6,
+            s=140,
+            marker="o",
+            zorder=5,
+        )
+        ax.scatter(
+            [xs[-1]],
+            [ys[-1]],
+            color=color,
+            edgecolors="#111827",
+            linewidths=1.2,
+            s=140,
+            marker="D",
+            zorder=5,
         )
 
         arrow_step = max(len(coordinates) // 6, 1)
@@ -127,22 +181,150 @@ def plot_vehicle_routes(
                 xy=(x2, y2),
                 xytext=(x1, y1),
                 arrowprops={
-                    "arrowstyle": "->",
+                    "arrowstyle": "-|>",
                     "color": color,
-                    "lw": 1.8,
+                    "lw": 1.4,
+                    "mutation_scale": 10,
                     "shrinkA": 0,
                     "shrinkB": 0,
                 },
                 zorder=4,
             )
 
+    for node_id, kind, color in interest_points:
+        node_data = graph.nodes[node_id]
+        x = node_data.get("x")
+        y = node_data.get("y")
+        if x is None or y is None:
+            continue
+
+        if kind == "depot":
+            ax.scatter(
+                [x],
+                [y],
+                s=180,
+                marker="D",
+                color="#0f172a",
+                edgecolors="#ffffff",
+                linewidths=1.4,
+                zorder=6,
+            )
+            ax.text(x, y, "D", ha="center", va="center", color="white", fontsize=10, fontweight="bold", zorder=7, transform=ax.transData)
+        else:
+            ax.scatter(
+                [x],
+                [y],
+                s=120,
+                marker="o",
+                color=color,
+                edgecolors="#111827",
+                linewidths=1.2,
+                zorder=6,
+            )
+            ax.text(x, y, "C", ha="center", va="center", color="white", fontsize=8, fontweight="bold", zorder=7, transform=ax.transData)
+
+    ax.set_title("Mapa de rutas optimizadas", fontsize=15, fontweight="bold", color="#0f172a", pad=10)
     if routes:
-        ax.legend(loc="best")
+        legend_handles = [
+            Line2D([0], [0], marker="o", color="w", markerfacecolor="#16a34a", markeredgecolor="#111827", markersize=8, label="Cliente"),
+            Line2D([0], [0], marker="D", color="w", markerfacecolor="#0f172a", markeredgecolor="#ffffff", markersize=8, label="Depósito"),
+            Line2D([0], [0], color="#2563eb", lw=2.5, label="Vehículo"),
+        ]
+        ax.legend(handles=legend_handles, loc="best", frameon=True, facecolor="white", edgecolor="#e2e8f0")
 
     if save_path is not None:
-        fig.savefig(save_path, dpi=160, bbox_inches="tight")
+        fig.savefig(save_path, dpi=220, bbox_inches="tight", facecolor=fig.get_facecolor())
 
     if show:
         plt.show()
 
     return fig, ax
+
+
+def plot_vehicle_routes_animation(
+    graph: nx.MultiDiGraph,
+    routes: Sequence[VehicleRoute | Sequence[str]],
+    paths: dict[str, dict[str, list]] | None = None,
+    route_node_paths: Sequence[Sequence] | None = None,
+    output_path: str | Path | None = None,
+    fps: int = 4,
+    show: bool = False,
+):
+    """
+    Genera una animación simple en GIF con los vehículos moviéndose sobre cada ruta.
+    """
+    plot_graph = graph
+    if "crs" not in plot_graph.graph:
+        plot_graph = graph.copy()
+        plot_graph.graph["crs"] = "epsg:4326"
+
+    fig, ax = ox.plot_graph(
+        plot_graph,
+        node_size=0,
+        edge_color="#cbd5e1",
+        edge_linewidth=0.8,
+        bgcolor="#f8fafc",
+        figsize=(10, 8),
+        show=False,
+        close=False,
+    )
+    fig.patch.set_facecolor("#f8fafc")
+    ax.set_facecolor("#f8fafc")
+    ax.set_aspect("equal", adjustable="box")
+    ax.axis("off")
+
+    resolved_node_paths = _resolve_node_paths(graph, routes, paths=paths, route_node_paths=route_node_paths)
+    route_coordinates = [route_node_path_to_coordinates(graph, node_path) for node_path in resolved_node_paths]
+    interest_points = _collect_interest_points(routes, graph)
+
+    colors = [ROUTE_COLORS[index % len(ROUTE_COLORS)] for index in range(len(route_coordinates))]
+    car_markers = []
+
+    for index, coordinates in enumerate(route_coordinates):
+        if not coordinates:
+            continue
+
+        xs = [coord[0] for coord in coordinates]
+        ys = [coord[1] for coord in coordinates]
+        ax.plot(xs, ys, color=colors[index], linewidth=2.8, alpha=0.95, zorder=3)
+        marker = ax.scatter([], [], s=140, marker="o", color=colors[index], edgecolors="#111827", linewidths=1.2, zorder=5)
+        car_markers.append(marker)
+
+    for node_id, kind, color in interest_points:
+        node_data = graph.nodes[node_id]
+        x = node_data.get("x")
+        y = node_data.get("y")
+        if x is None or y is None:
+            continue
+
+        if kind == "depot":
+            ax.scatter([x], [y], s=180, marker="D", color="#0f172a", edgecolors="#ffffff", linewidths=1.4, zorder=6)
+            ax.text(x, y, "D", ha="center", va="center", color="white", fontsize=10, fontweight="bold", zorder=7)
+        else:
+            ax.scatter([x], [y], s=120, marker="o", color=color, edgecolors="#111827", linewidths=1.2, zorder=6)
+            ax.text(x, y, "C", ha="center", va="center", color="white", fontsize=8, fontweight="bold", zorder=7)
+
+    frame_count = max((len(coordinates) for coordinates in route_coordinates if coordinates), default=1)
+
+    def update(frame: int):
+        for marker, coordinates in zip(car_markers, route_coordinates):
+            if not coordinates:
+                continue
+            idx = min(frame, len(coordinates) - 1)
+            marker.set_offsets([(coordinates[idx][0], coordinates[idx][1])])
+        return car_markers
+
+    ax.set_title("Animación de rutas", fontsize=15, fontweight="bold", color="#0f172a", pad=10)
+    animation = FuncAnimation(fig, update, frames=range(frame_count), interval=1000 // max(fps, 1), repeat=False)
+
+    if output_path is None:
+        output_path = Path("outputs/routes.gif")
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    animation.save(output_path, writer=PillowWriter(fps=fps))
+
+    if show:
+        plt.show()
+
+    plt.close(fig)
+    return output_path

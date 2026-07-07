@@ -123,11 +123,11 @@ def solve_cvrp_nearest_neighbor(
         remaining = sorted(unvisited - assigned_nodes)
         if remaining:
             for idx in remaining:
-                routes[0].route_indices.append(idx)
-                routes[0].route.append(nodes[idx])
-                routes[0].load += demand_by_node[nodes[idx]]
-                routes[0].total_cost = calculate_route_cost(
-                    matrix, routes[0].route_indices
+                multi_vehicle_routes[0].route_indices.append(idx)
+                multi_vehicle_routes[0].route.append(nodes[idx])
+                multi_vehicle_routes[0].load += demand_by_node[nodes[idx]]
+                multi_vehicle_routes[0].total_cost = calculate_route_cost(
+                    matrix, multi_vehicle_routes[0].route_indices
                 )
 
         return VRPSolution(

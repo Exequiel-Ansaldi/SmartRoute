@@ -4,7 +4,7 @@ from src.utils.load_graph import load_graph
 from src.scenario.generator import ScenarioGenerator
 from src.graph.augment_graph import GraphAugmenter
 from src.config import SEED
-from src.routing.dijkstra import dijkstra, dijkstra_path_and_length
+from src.experimental.dijkstra import dijkstra, dijkstra_path_and_length
 
 
 class TestDijkstra(unittest.TestCase):

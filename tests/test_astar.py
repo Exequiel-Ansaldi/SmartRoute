@@ -4,8 +4,8 @@ from src.utils.load_graph import load_graph
 from src.scenario.generator import ScenarioGenerator
 from src.graph.augment_graph import GraphAugmenter
 from src.config import SEED
-from src.routing.dijkstra import dijkstra_path_and_length
-from src.routing.astar import astar_shortest_path, haversine_distance
+from src.experimental.dijkstra import dijkstra_path_and_length
+from src.experimental.astar import astar_shortest_path, haversine_distance
 
 
 class TestAStar(unittest.TestCase):

@@ -26,3 +26,11 @@ streamlit run src/dashboard/app.py
 python -m unittest discover -s tests
 ```
 
+## Benchmark de Caminos Mínimos (Experimental)
+
+Para comparar el rendimiento en tiempo de ejecución y uso de memoria de Dijkstra personalizado, A* con la heurística de Haversine, y las implementaciones de NetworkX:
+
+```powershell
+python -m src.experimental.benchmark
+```
+

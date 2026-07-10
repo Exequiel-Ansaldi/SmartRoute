@@ -4,7 +4,7 @@ from src.utils.load_graph import load_graph
 from src.scenario.generator import ScenarioGenerator
 from src.graph.augment_graph import GraphAugmenter
 from src.config import SEED
-from src.routing.matrix import CostMatrixGenerator
+from src.experimental.matrix import CostMatrixGenerator
 
 
 class TestCostMatrixGenerator(unittest.TestCase):

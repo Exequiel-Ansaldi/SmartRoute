@@ -5,7 +5,29 @@
 Genera matrices de distancia o tiempo:
 
 ```python
+from src.experimental.matrix import CostMatrixGenerator
+
 matrix, nodes, paths = CostMatrixGenerator(graph).generate(scenario, weight="length")
+```
+
+## `dijkstra_path_and_length`
+
+Calcula la distancia mínima y el camino usando Dijkstra (deteniéndose en el destino):
+
+```python
+from src.experimental.dijkstra import dijkstra_path_and_length
+
+length, path = dijkstra_path_and_length(graph, source, target, weight="length")
+```
+
+## `astar_shortest_path`
+
+Calcula el camino mínimo usando A* con heurística de Haversine admisible:
+
+```python
+from src.experimental.astar import astar_shortest_path
+
+length, path = astar_shortest_path(graph, source, target, weight="length")
 ```
 
 ## `solve_tsp`

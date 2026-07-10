@@ -90,7 +90,7 @@ def solve_cvrp_nearest_neighbor(
                 feasible_routes.append((route_cost, current_load, route_index, route))
 
             if not feasible_routes:
-                best_route = route_states[0]
+                continue
             else:
                 feasible_routes.sort(key=lambda item: (item[1], item[0], item[2]))
                 best_route = feasible_routes[0][3]
@@ -121,19 +121,12 @@ def solve_cvrp_nearest_neighbor(
             )
 
         remaining = sorted(unvisited - assigned_nodes)
-        if remaining:
-            for idx in remaining:
-                multi_vehicle_routes[0].route_indices.append(idx)
-                multi_vehicle_routes[0].route.append(nodes[idx])
-                multi_vehicle_routes[0].load += demand_by_node[nodes[idx]]
-                multi_vehicle_routes[0].total_cost = calculate_route_cost(
-                    matrix, multi_vehicle_routes[0].route_indices
-                )
+        unassigned = [nodes[idx] for idx in remaining]
 
         return VRPSolution(
             routes=multi_vehicle_routes,
             total_cost=sum(route.total_cost for route in multi_vehicle_routes),
-            unassigned=[],
+            unassigned=unassigned,
         )
 
     routes: list[VehicleRoute] = []

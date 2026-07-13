@@ -1,7 +1,7 @@
 # Optimización de Rutas
 
-Sistema para generar escenarios logísticos sobre un grafo vial de Concordia,
-calcular caminos mínimos, optimizar rutas y simular recorridos.
+Sistema de optimización de rutas desarrollado sobre un grafo vial real de la ciudad de Concordia, Entre Ríos.
+El proyecto permite generar escenarios logísticos, calcular caminos mínimos, optimizar recorridos de vehículos y visualizar los resultados mediante un dashboard interactivo.
 
 ## Instalación
 
@@ -11,19 +11,39 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-## Ejecución rápida
+# Dashboard
 
-```powershell
-python main.py --clients 5 --vehicles 2 --capacity 10
-```
+El sistema cuenta con un dashboard interactivo para explorar:
 
-El mapa se guarda por defecto en `outputs/routes.png`.
+Visualización del grafo vial.
+Generación de clientes y depósitos sobre calles reales.
+Cálculo de rutas óptimas.
+Visualización de recorridos de vehículos.
+Métricas de distancia, tiempo y eficiencia.
+Simulación del proceso logístico.
 
-## Dashboard
+## Ejecutar dashboard
 
-```powershell
+```bash
 streamlit run src/dashboard/app.py
 ```
+
+El dashboard se abrirá automáticamente en el navegador.
+
+## Procesamiento geográfico
+
+- Descarga y construcción del grafo vial utilizando datos reales de OpenStreetMap.
+- Modelado de calles mediante grafos dirigidos.
+- Análisis de conectividad y características de la red vial.
+
+## Generación de escenarios
+
+Permite crear escenarios logísticos con:
+
+- Depósito inicial.
+- Clientes distribuidos sobre calles reales.
+- Cantidad configurable de vehículos.
+- Restricciones de capacidad.
 
 ## Tests
 

@@ -26,7 +26,7 @@ class GraphAugmenter:
     def __init__(self, graph: nx.MultiDiGraph):
         self.graph = graph
         self._inserted_nodes: defaultdict[
-            tuple[str, str, object | None], list[tuple[str, float, float]]
+            tuple[int, int, object | None], list[tuple[str, float, float]]
         ] = defaultdict(list)
 
     def augment(self, scenario: Scenario) -> AugmentationResult:
@@ -176,6 +176,7 @@ class GraphAugmenter:
                     break
 
             # Determinar los nodos fronterizos (anterior y posterior) del nuevo punto
+            prev_node: int | str
             if idx == 0:
                 prev_node = u
                 prev_dist = 0.0
@@ -183,6 +184,7 @@ class GraphAugmenter:
             else:
                 prev_node, prev_dist, prev_fraction = all_insertions[idx - 1]
 
+            next_node: int | str
             if idx == len(all_insertions) - 1:
                 next_node = v
                 next_dist = original_length

@@ -53,7 +53,6 @@ coverage.xml
 *.jpg
 *.jpeg
 *.geojson
-*.graphml
 
 # IDEs and editors
 .vscode/

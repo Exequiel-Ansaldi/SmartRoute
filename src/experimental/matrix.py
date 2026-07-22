@@ -152,9 +152,7 @@ class CostMatrixGenerator:
 
     def generate_both(
         self, scenario: Scenario
-    ) -> tuple[
-        np.ndarray, np.ndarray, list[str], dict[str, dict[str, list]]
-    ]:
+    ) -> tuple[np.ndarray, np.ndarray, list[str], dict[str, dict[str, list]]]:
         """
         Genera ambas matrices (length y travel_time) en una sola pasada de Dijkstra por nodo.
         Devuelve (length_matrix, time_matrix, nodes_list, paths).

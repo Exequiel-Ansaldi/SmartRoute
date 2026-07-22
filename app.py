@@ -16,7 +16,7 @@ def get_graph():
     return load_graph()
 
 
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def run_cached_pipeline(
     clients: int,
     seed: int,

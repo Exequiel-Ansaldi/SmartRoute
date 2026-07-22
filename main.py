@@ -75,8 +75,7 @@ def run_pipeline(
     augmented_graph = GraphAugmenter(graph).augment(scenario).graph
 
     matrix_generator = CostMatrixGenerator(augmented_graph)
-    distance_matrix, nodes, paths = matrix_generator.generate(scenario, weight="length")
-    time_matrix, _, _ = matrix_generator.generate(scenario, weight="travel_time")
+    distance_matrix, time_matrix, nodes, paths = matrix_generator.generate_both(scenario)
 
     routes, solution = solve_routes_for_algorithm(
         distance_matrix,

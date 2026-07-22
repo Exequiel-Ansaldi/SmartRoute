@@ -3,11 +3,44 @@ from pathlib import Path
 import streamlit as st
 
 from main import run_pipeline
+from src.utils.load_graph import load_graph
 
 st.set_page_config(page_title="Optimizador de Rutas", page_icon="🚗", layout="wide")
 
 st.title("🚗 Optimización de rutas en Concordia")
 st.markdown("Seleccioná los parámetros y observá cómo cambian las rutas, los vehículos y el mapa.")
+
+
+@st.cache_resource
+def get_graph():
+    return load_graph()
+
+
+@st.cache_data
+def run_cached_pipeline(
+    clients: int,
+    seed: int,
+    vehicles: int,
+    algorithm: str,
+    output: str,
+    animation_output: str,
+) -> dict:
+    result = run_pipeline(
+        clients=clients,
+        seed=seed,
+        vehicles=vehicles,
+        algorithm=algorithm,
+        output=output,
+        animation_output=animation_output,
+        show_plot=False,
+    )
+    return {
+        "nodes": result.nodes,
+        "routes": result.routes,
+        "solution": result.solution,
+        "total_time": result.simulation.total_time,
+        "bottlenecks": len(result.simulation.bottlenecks),
+    }
 
 with st.sidebar:
     st.header("Parámetros")
@@ -39,35 +72,37 @@ with st.sidebar:
     run_button = st.button("Ejecutar simulación", use_container_width=True)
 
 if run_button:
+    get_graph()
+
     output_dir = Path("outputs")
     output_dir.mkdir(parents=True, exist_ok=True)
-    static_path = output_dir / "dashboard_routes.png"
-    animation_path = output_dir / "dashboard_routes.gif"
+    static_path = str(output_dir / "dashboard_routes.png")
+    animation_path = str(output_dir / "dashboard_routes.gif")
 
     with st.spinner("Generando escenario y calculando rutas..."):
-        result = run_pipeline(
+        cached = run_cached_pipeline(
             clients=clients,
             seed=seed,
             vehicles=vehicles,
             algorithm=effective_algorithm,
             output=static_path,
-            animation_output=animation_path if show_animation else None,
-            show_plot=False,
+            animation_output=animation_path if show_animation else "",
         )
 
     st.success("Simulación lista")
 
     col1, col2, col3 = st.columns(3)
     col1.metric("Algoritmo", effective_algorithm.upper())
-    col2.metric("Clientes", len(result.nodes) - 1)
-    col3.metric("Tiempo total", f"{result.simulation.total_time:.2f} s")
+    col2.metric("Clientes", len(cached["nodes"]) - 1)
+    col3.metric("Tiempo total", f"{cached['total_time']:.2f} s")
 
-    if show_animation and animation_path.exists():
+    anim_path = Path(animation_path)
+    if show_animation and anim_path.exists():
         st.subheader("Animación")
-        st.image(str(animation_path), use_container_width=True)
+        st.image(str(anim_path), use_container_width=True)
 
     st.subheader("Detalle")
-    for route in result.routes:
+    for route in cached["routes"]:
         st.write(f"Vehículo {route.vehicle_id}: {' -> '.join(route.route)} | costo {route.total_cost:.2f}")
 else:
     st.info("Presioná ejecutar para generar una nueva simulación.")

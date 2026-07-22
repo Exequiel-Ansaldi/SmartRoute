@@ -25,6 +25,35 @@ ROUTE_COLORS = [
 ]
 
 
+def _render_base_graph(
+    graph: nx.MultiDiGraph,
+    bgcolor: str = "white",
+    edge_color: str = "#d9d9d9",
+    edge_linewidth: float = 0.7,
+    figsize: tuple[int, int] | None = None,
+) -> tuple[plt.Figure, plt.Axes]:
+    """
+    Renderiza la red vial base sobre un Axes. Reutilizable por plot y animación.
+    """
+    plot_graph = graph
+    if "crs" not in plot_graph.graph:
+        plot_graph = graph.copy()
+        plot_graph.graph["crs"] = "epsg:4326"
+
+    kwargs: dict = dict(
+        node_size=0,
+        edge_color=edge_color,
+        edge_linewidth=edge_linewidth,
+        bgcolor=bgcolor,
+        show=False,
+        close=False,
+    )
+    if figsize is not None:
+        kwargs["figsize"] = figsize
+
+    return ox.plot_graph(plot_graph, **kwargs)
+
+
 def _edge_coordinates(graph: nx.MultiDiGraph, u, v) -> list[tuple[float, float]]:
     edge_data = graph.get_edge_data(u, v)
     if edge_data:
@@ -115,19 +144,8 @@ def plot_vehicle_routes(
     """
     Grafica rutas con estilos más claros y marcadores visibles para cada vehículo.
     """
-    plot_graph = graph
-    if "crs" not in plot_graph.graph:
-        plot_graph = graph.copy()
-        plot_graph.graph["crs"] = "epsg:4326"
-
-    fig, ax = ox.plot_graph(
-        plot_graph,
-        node_size=0,
-        edge_color="#d9d9d9",
-        edge_linewidth=0.7,
-        bgcolor="white",
-        show=False,
-        close=False,
+    fig, ax = _render_base_graph(
+        graph, bgcolor="white", edge_color="#d9d9d9", edge_linewidth=0.7
     )
 
     resolved_node_paths = _resolve_node_paths(
@@ -311,20 +329,12 @@ def plot_vehicle_routes_animation(
     """
     Genera una animación simple en GIF con los vehículos moviéndose sobre cada ruta.
     """
-    plot_graph = graph
-    if "crs" not in plot_graph.graph:
-        plot_graph = graph.copy()
-        plot_graph.graph["crs"] = "epsg:4326"
-
-    fig, ax = ox.plot_graph(
-        plot_graph,
-        node_size=0,
+    fig, ax = _render_base_graph(
+        graph,
+        bgcolor="#f8fafc",
         edge_color="#cbd5e1",
         edge_linewidth=0.8,
-        bgcolor="#f8fafc",
         figsize=(10, 8),
-        show=False,
-        close=False,
     )
     fig.patch.set_facecolor("#f8fafc")
     ax.set_facecolor("#f8fafc")

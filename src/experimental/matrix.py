@@ -5,7 +5,7 @@ import networkx as nx
 import numpy as np
 from src.config import DEFAULT_SPEED_KPH, DEFAULT_SPEEDS_KPH
 from src.scenario.entities import Scenario
-from src.experimental.dijkstra import dijkstra
+from src.experimental.dijkstra import dijkstra, dijkstra_two_weights
 
 
 def parse_maxspeed(maxspeed_val) -> float | None:
@@ -77,8 +77,7 @@ class CostMatrixGenerator:
     """
 
     def __init__(self, graph: nx.MultiDiGraph):
-        # Crear una copia interna para no mutar el grafo original externamente
-        self.graph = cast(nx.MultiDiGraph, graph.copy())
+        self.graph = cast(nx.MultiDiGraph, graph)
         add_travel_times_to_graph(self.graph)
 
     def generate(
@@ -150,3 +149,59 @@ class CostMatrixGenerator:
                     paths[u][v] = []
 
         return matrix, nodes_list, paths
+
+    def generate_both(
+        self, scenario: Scenario
+    ) -> tuple[
+        np.ndarray, np.ndarray, list[str], dict[str, dict[str, list]]
+    ]:
+        """
+        Genera ambas matrices (length y travel_time) en una sola pasada de Dijkstra por nodo.
+        Devuelve (length_matrix, time_matrix, nodes_list, paths).
+        """
+        depot_id = scenario.depot.id
+        client_ids = [c.id for c in scenario.clients]
+        nodes_list = [depot_id] + client_ids
+        N = len(nodes_list)
+
+        length_matrix = np.full((N, N), float("inf"))
+        time_matrix = np.full((N, N), float("inf"))
+        paths: dict[str, dict[str, list[str]]] = {u: {} for u in nodes_list}
+
+        for i, u in enumerate(nodes_list):
+            length_matrix[i, i] = 0.0
+            time_matrix[i, i] = 0.0
+            paths[u][u] = [u]
+
+            if u not in self.graph:
+                continue
+
+            dist_a, dist_b, predecessors = dijkstra_two_weights(
+                self.graph, source=u, weight_a="length", weight_b="travel_time"
+            )
+
+            for j, v in enumerate(nodes_list):
+                if u == v:
+                    continue
+
+                if v in dist_a:
+                    length_matrix[i, j] = dist_a[v]
+                    time_matrix[i, j] = dist_b[v]
+
+                    path: list[str] = []
+                    curr: str | None = v
+                    while curr is not None:
+                        path.append(curr)
+                        curr = predecessors.get(curr)
+                    path.reverse()
+
+                    if path and path[0] == u:
+                        paths[u][v] = path
+                    else:
+                        paths[u][v] = []
+                else:
+                    length_matrix[i, j] = float("inf")
+                    time_matrix[i, j] = float("inf")
+                    paths[u][v] = []
+
+        return length_matrix, time_matrix, nodes_list, paths

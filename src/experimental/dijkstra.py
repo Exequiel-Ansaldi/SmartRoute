@@ -85,6 +85,63 @@ def dijkstra(
     return distances, predecessors
 
 
+def dijkstra_two_weights(
+    graph: nx.MultiDiGraph,
+    source: Any,
+    weight_a: str = "length",
+    weight_b: str = "travel_time",
+) -> tuple[dict[Any, float], dict[Any, float], dict[Any, Any]]:
+    """
+    Ejecuta Dijkstra desde un nodo origen calculando simultáneamente
+    dos pesos distintos en un solo recorrido.
+
+    Devuelve (distancias_a, distancias_b, predecesores).
+    """
+    if source not in graph:
+        raise ValueError(f"El nodo origen {source} no existe en el grafo.")
+
+    distances_a = {source: 0.0}
+    distances_b = {source: 0.0}
+    predecessors: dict[Any, Any] = {}
+
+    counter = count()
+    pq = [(0.0, next(counter), source)]
+    visited: set = set()
+
+    while pq:
+        dist_u, _, u = heapq.heappop(pq)
+
+        if u in visited:
+            continue
+        visited.add(u)
+
+        for v in graph.successors(u):
+            edge_data_dict = graph.get_edge_data(u, v)
+            if not edge_data_dict:
+                continue
+
+            min_a = float("inf")
+            min_b = float("inf")
+            for data in edge_data_dict.values():
+                val_a = _edge_weight(data, weight_a)
+                val_b = _edge_weight(data, weight_b)
+                if val_a < min_a:
+                    min_a = val_a
+                    min_b = val_b
+
+            if min_a == float("inf"):
+                continue
+
+            new_dist_a = dist_u + min_a
+            if v not in distances_a or new_dist_a < distances_a[v]:
+                distances_a[v] = new_dist_a
+                distances_b[v] = distances_b[u] + min_b
+                predecessors[v] = u
+                heapq.heappush(pq, (new_dist_a, next(counter), v))
+
+    return distances_a, distances_b, predecessors
+
+
 def dijkstra_path_and_length(
     graph: nx.MultiDiGraph, source, target, weight: str = "length"
 ) -> tuple[float, list]:

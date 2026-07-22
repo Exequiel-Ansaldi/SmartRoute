@@ -10,6 +10,24 @@ from src.experimental.matrix import CostMatrixGenerator
 matrix, nodes, paths = CostMatrixGenerator(graph).generate(scenario, weight="length")
 ```
 
+También se puede generar ambas matrices (distancia y tiempo) en una sola pasada:
+
+```python
+length_matrix, time_matrix, nodes, paths = CostMatrixGenerator(graph).generate_both(scenario)
+```
+
+## `dijkstra_two_weights`
+
+Calcula caminos mínimos con dos pesos distintos en un solo recorrido:
+
+```python
+from src.experimental.dijkstra import dijkstra_two_weights
+
+dist_a, dist_b, predecessors = dijkstra_two_weights(
+    graph, source=u, weight_a="length", weight_b="travel_time"
+)
+```
+
 ## `dijkstra_path_and_length`
 
 Calcula la distancia mínima y el camino usando Dijkstra (deteniéndose en el destino):
